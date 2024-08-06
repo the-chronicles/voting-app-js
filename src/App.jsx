@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import VoterDetails from "./components/VoterDetails";
-import Vote from "./components/Vote";
+import VoterDetails from "./pages/VoterDetails";
+import Vote from "./pages/Vote";
 
 
 
