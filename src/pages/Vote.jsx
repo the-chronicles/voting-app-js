@@ -10,7 +10,7 @@ function Vote(){
             const response = await axios.post('http://localhost:5000/vote', { vote });
             setMessage(response.data.message);
         } catch (error) {
-            setMessage('Error casting vote');
+            setMessage('Error casting vote!');
         }
     };
 
