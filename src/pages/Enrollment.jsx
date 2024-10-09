@@ -1,7 +1,7 @@
-import React from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function Enrollment({ voter }) {
   const navigate = useNavigate();
@@ -9,8 +9,13 @@ function Enrollment({ voter }) {
   const enrollFingerprint = async () => {
     try {
       // Fetch challenge from the backend
-      const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/generate-challenge');
-      const challenge = Uint8Array.from(atob(challengeResponse.data.challenge), c => c.charCodeAt(0));
+      const challengeResponse = await axios.post(
+        "https://votingjs-backend.onrender.com/generate-challenge",
+      );
+      const challenge = Uint8Array.from(
+        atob(challengeResponse.data.challenge),
+        (c) => c.charCodeAt(0),
+      );
 
       const publicKey = {
         challenge: challenge, // Use the server-generated challenge
@@ -32,25 +37,31 @@ function Enrollment({ voter }) {
       const credential = await navigator.credentials.create({ publicKey });
 
       // Send the credential to the backend to store for future authentication
-      await axios.post('https://votingjs-backend.onrender.com/enroll-fingerprint', { credential, voterId: voter.id });
+      await axios.post(
+        "https://votingjs-backend.onrender.com/enroll-fingerprint",
+        { credential, voterId: voter.id },
+      );
 
-      alert('Fingerprint enrollment successful!');
-      navigate('/vote'); // Redirect to voting page after successful enrollment
+      alert("Fingerprint enrollment successful!");
+      navigate("/vote"); // Redirect to voting page after successful enrollment
     } catch (error) {
-      console.error('Error during fingerprint enrollment:', error);
-      alert('Fingerprint enrollment failed.');
+      console.error("Error during fingerprint enrollment:", error);
+      alert("Fingerprint enrollment failed.");
     }
   };
 
   return (
     <>
-    <Navbar />
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">Enroll Your Fingerprint</h1>
-      <button onClick={enrollFingerprint} className="bg-green-500 text-white px-6 py-2 rounded">
-        Start Enrollment
-      </button>
-    </div>
+      <Navbar />
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <h1 className="mb-6 text-2xl font-bold">Enroll Your Fingerprint</h1>
+        <button
+          onClick={enrollFingerprint}
+          className="rounded bg-green-500 px-6 py-2 text-white"
+        >
+          Start Enrollment
+        </button>
+      </div>
     </>
   );
 }
