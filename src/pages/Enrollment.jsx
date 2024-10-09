@@ -20,7 +20,7 @@ const Enrollment = () => { // Accept voter as a prop
       setInstruction("Please place your finger on the scanner...");
 
       // Fetch the challenge from the backend
-      const response = await axios.post('http://localhost:5000/generate-challenge', {
+      const response = await axios.post('https://votingjs-backend.onrender.com/generate-challenge', {
         voterId: voter.id
       });
 
@@ -48,7 +48,7 @@ const Enrollment = () => { // Accept voter as a prop
       const credential = await navigator.credentials.create({ publicKey });
 
       // Send the fingerprint credential to the server for registration
-      const enrollResponse = await axios.post('http://localhost:5000/register-fingerprint', {
+      const enrollResponse = await axios.post('https://votingjs-backend.onrender.com/register-fingerprint', {
         userId: voter.id,
         attestation: credential
       });
