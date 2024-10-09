@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 function Enrollment({ voter }) {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ function Enrollment({ voter }) {
   const enrollFingerprint = async () => {
     try {
       // Fetch challenge from the backend
-      const challengeResponse = await axios.post('http://localhost:5000/generate-challenge');
+      const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/generate-challenge');
       const challenge = Uint8Array.from(atob(challengeResponse.data.challenge), c => c.charCodeAt(0));
 
       const publicKey = {
@@ -31,7 +32,7 @@ function Enrollment({ voter }) {
       const credential = await navigator.credentials.create({ publicKey });
 
       // Send the credential to the backend to store for future authentication
-      await axios.post('http://localhost:5000/enroll-fingerprint', { credential, voterId: voter.id });
+      await axios.post('https://votingjs-backend.onrender.com/enroll-fingerprint', { credential, voterId: voter.id });
 
       alert('Fingerprint enrollment successful!');
       navigate('/vote'); // Redirect to voting page after successful enrollment
@@ -42,12 +43,15 @@ function Enrollment({ voter }) {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Enroll Your Fingerprint</h1>
       <button onClick={enrollFingerprint} className="bg-green-500 text-white px-6 py-2 rounded">
         Start Enrollment
       </button>
     </div>
+    </>
   );
 }
 

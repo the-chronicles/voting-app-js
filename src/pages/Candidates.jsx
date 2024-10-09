@@ -53,7 +53,7 @@ function Candidates() {
   const handleVote = async () => {
     try {
       // Fetch a real challenge from the server
-      const challengeResponse = await axios.post('http://localhost:5000/get-challenge', {
+      const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/get-challenge', {
         voterId: voter.id, // Pass the voter ID to fetch the challenge
       });
       
@@ -82,7 +82,7 @@ function Candidates() {
         }
       };
   
-      const response = await axios.post('http://localhost:5000/biometric-vote', {
+      const response = await axios.post('https://votingjs-backend.onrender.com/biometric-vote', {
         voterId: voter.id,
         candidateId: selectedCandidate.id,
         biometricData,
