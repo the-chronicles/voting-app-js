@@ -10,7 +10,7 @@ function Enrollment({ voter }) {
     setInstruction("Please place your finger on the scanner.");
     try {
       // Fetch challenge from the backend
-      const challengeResponse = await axios.post('http://localhost:5000/generate-challenge');
+      const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/generate-challenge');
       const challenge = Uint8Array.from(atob(challengeResponse.data.challenge), c => c.charCodeAt(0));
   
       const publicKey = {
@@ -35,7 +35,7 @@ function Enrollment({ voter }) {
       const credential = await navigator.credentials.create({ publicKey });
   
       // Send the credential to the backend to store for future authentication
-      await axios.post('http://localhost:5000/enroll-fingerprint', { credential, voterId: voter.id });
+      await axios.post('https://votingjs-backend.onrender.com/enroll-fingerprint', { credential, voterId: voter.id });
   
       alert('Fingerprint enrollment successful!');
       navigate('/vote');
