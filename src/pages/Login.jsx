@@ -7,14 +7,17 @@ function Login() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  
 
   async function handleLogin() {
     try {
-      const response = await axios.post("https://votingjs-backend.onrender.com/login", {
+      const response = await axios.post("http://localhost:5000/login", {
+      // const response = await axios.post("https://votingjs-backend.onrender.com/login", {
         name,
       });
       if (response.data.success) {
-        navigate("/enroll", { state: { voter: response.data.voter } });
+        // navigate("/enroll", { state: { voter: response.data.voter } });
+        navigate('/enrollment', { state: { voter: voterData } });
         // navigate("/vdetails", { state: { voter: response.data.voter } });
       } else {
         setMessage("Login failed");

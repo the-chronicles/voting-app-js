@@ -11,8 +11,8 @@ function Register() {
 
   async function handleRegister() {
     try {
-      // const response = await axios.post("http://localhost:5000/register", {
-      const response = await axios.post("https://votingjs-backend.onrender.com/register", {
+      const response = await axios.post("http://localhost:5000/register", {
+      // const response = await axios.post("https://votingjs-backend.onrender.com/register", {
         name,
         age,
       });

@@ -1,52 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-function Enrollment({ voter }) {
+const Enrollment = () => { // Accept voter as a prop
+  const [instruction, setInstruction] = useState('');
   const navigate = useNavigate();
-  const [instruction, setInstruction] = useState("");
+
+  const location = useLocation();
+  const voter = location.state?.voter; // Get voter data safely
 
   const enrollFingerprint = async () => {
-    setInstruction("Please place your finger on the scanner.");
     try {
-      // Fetch challenge from the backend
-      const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/generate-challenge');
-      const challenge = Uint8Array.from(atob(challengeResponse.data.challenge), c => c.charCodeAt(0));
-  
+      // Ensure voter is defined
+      if (!voter || !voter.id) {
+        throw new Error('Voter information is missing. Please log in again.');
+      }
+
+      // Display instructions to the user
+      setInstruction("Please place your finger on the scanner...");
+
+      // Fetch the challenge from the backend
+      const response = await axios.post('http://localhost:5000/generate-challenge', {
+        voterId: voter.id
+      });
+
+      const challenge = Uint8Array.from(atob(response.data.challenge), c => c.charCodeAt(0));
+
       const publicKey = {
         challenge: challenge,
         rp: { name: "Voting Platform" },
         user: {
-          id: new Uint8Array(16), // Generate a unique user ID, ensure it is unique for each user
+          id: Uint8Array.from(voter.id, c => c.charCodeAt(0)),
           name: voter.name,
           displayName: voter.name,
         },
         pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         authenticatorSelection: {
-          authenticatorAttachment: "platform", // Using built-in device fingerprint
+          authenticatorAttachment: "platform",
           requireResidentKey: false,
-          userVerification: "preferred" // Optional: Ensure user verification is requested
+          userVerification: "preferred"
         },
         timeout: 60000,
         attestation: "none",
       };
-  
-      // Wait for the user to place their finger on the scanner
+
+      // Wait for the fingerprint scan
       const credential = await navigator.credentials.create({ publicKey });
-  
-      // Send the credential to the backend to store for future authentication
-      await axios.post('https://votingjs-backend.onrender.com/enroll-fingerprint', { credential, voterId: voter.id });
-  
-      alert('Fingerprint enrollment successful!');
-      navigate('/vote');
+
+      // Send the fingerprint credential to the server for registration
+      const enrollResponse = await axios.post('http://localhost:5000/register-fingerprint', {
+        userId: voter.id,
+        attestation: credential
+      });
+
+      if (enrollResponse.data.success) {
+        alert('Fingerprint enrollment successful!');
+        navigate('/vote');
+      } else {
+        alert('Enrollment failed. Please try again.');
+      }
     } catch (error) {
-      console.error('Error during fingerprint enrollment:', error);
-      alert('Fingerprint enrollment failed. Please try again.');
+      console.error('Fingerprint enrollment failed:', error);
+      alert(error.message || 'Fingerprint enrollment failed. Please try again.');
     } finally {
-      setInstruction(""); // Clear instruction after the process
+      setInstruction(""); // Clear the instruction once done
     }
   };
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -57,6 +76,6 @@ function Enrollment({ voter }) {
       {instruction && <p className="mt-4 text-blue-500">{instruction}</p>} {/* Display instruction */}
     </div>
   );
-}
+};
 
 export default Enrollment;
