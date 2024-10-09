@@ -24,7 +24,7 @@ function Candidates() {
 
   useEffect(() => {
     async function fetchCandidates() {
-      const response = await axios.get("http://localhost:5000/candidates");
+      const response = await axios.get("https://votingjs-backend.onrender.com/candidates");
       setCandidates(response.data);
     }
     fetchCandidates();
@@ -34,7 +34,7 @@ function Candidates() {
     try {
       const biometricData = await BiometricScan();
       const response = await axios.post(
-        "http://localhost:5000/biometric-vote",
+        "https://votingjs-backend.onrender.com/biometric-vote",
         { voterId: voter.id, candidateId: selectedCandidate.id, biometricData },
       );
       if (response.data.success) {
