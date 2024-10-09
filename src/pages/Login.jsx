@@ -10,11 +10,12 @@ function Login() {
 
   async function handleLogin() {
     try {
-      const response = await axios.post("https://votingjs-backend.onrender.com/login", {
+      const response = await axios.post("http://localhost:5000/login", {
         name,
       });
       if (response.data.success) {
-        navigate("/vdetails", { state: { voter: response.data.voter } });
+        navigate("/enroll", { state: { voter: response.data.voter } });
+        // navigate("/vdetails", { state: { voter: response.data.voter } });
       } else {
         setMessage("Login failed");
       }

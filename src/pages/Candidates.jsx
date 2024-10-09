@@ -24,28 +24,82 @@ function Candidates() {
 
   useEffect(() => {
     async function fetchCandidates() {
-      const response = await axios.get("https://votingjs-backend.onrender.com/candidates");
+      const response = await axios.get("http://localhost:5000/candidates");
       setCandidates(response.data);
     }
     fetchCandidates();
   }, []);
 
-  async function handleVote() {
+  // async function handleVote() {
+  //   try {
+  //     const biometricData = await BiometricScan();
+  //     const response = await axios.post(
+  //       "https://votingjs-backend.onrender.com/biometric-vote",
+  //       { voterId: voter.id, candidateId: selectedCandidate.id, biometricData },
+  //     );
+  //     if (response.data.success) {
+  //       navigate("/results");
+  //     } else {
+  //       alert("You have already voted or biometric verification failed");
+  //     }
+  //   } catch (error) {
+  //     alert("Error during voting");
+  //   }
+  // }
+
+
+
+
+  const handleVote = async () => {
     try {
-      const biometricData = await BiometricScan();
-      const response = await axios.post(
-        "https://votingjs-backend.onrender.com/biometric-vote",
-        { voterId: voter.id, candidateId: selectedCandidate.id, biometricData },
-      );
+      // Fetch a real challenge from the server
+      const challengeResponse = await axios.post('http://localhost:5000/get-challenge', {
+        voterId: voter.id, // Pass the voter ID to fetch the challenge
+      });
+      
+      const publicKey = {
+        challenge: Uint8Array.from(atob(challengeResponse.data.challenge), c => c.charCodeAt(0)),
+        allowCredentials: [{
+          id: Uint8Array.from(atob(voter.credentialId), c => c.charCodeAt(0)),
+          type: "public-key",
+          transports: ["internal"]
+        }],
+        timeout: 60000,
+      };
+  
+      const assertion = await navigator.credentials.get({ publicKey });
+  
+      // Prepare biometric data for sending to the backend
+      const biometricData = {
+        id: assertion.id,
+        rawId: assertion.rawId,
+        type: assertion.type,
+        response: {
+          authenticatorData: assertion.response.authenticatorData,
+          clientDataJSON: assertion.response.clientDataJSON,
+          signature: assertion.response.signature,
+          userHandle: assertion.response.userHandle,
+        }
+      };
+  
+      const response = await axios.post('http://localhost:5000/biometric-vote', {
+        voterId: voter.id,
+        candidateId: selectedCandidate.id,
+        biometricData,
+      });
+  
       if (response.data.success) {
-        navigate("/results");
+        alert("Vote successful!");
+        navigate('/results');
       } else {
-        alert("You have already voted or biometric verification failed");
+        alert(response.data.message || "Biometric authentication failed.");
       }
     } catch (error) {
-      alert("Error during voting");
+      console.error("Error during biometric authentication:", error);
+      alert("Error during voting.");
     }
-  }
+  };
+  
 
   function handleCancel() {
     setPopupVisible(false);

@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Candidates from "./pages/Candidates";
 import Result from "./pages/Result";
+import Enrollment from "./pages/Enrollment";
 
 
 
@@ -13,6 +14,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/enroll" element={<Enrollment />} />
       <Route path="/vdetails" element={<VoterDetails />} />
       <Route path="/candidates" element={<Candidates />} />
       <Route path="/result" element={<Result />} />

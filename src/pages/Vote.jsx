@@ -7,7 +7,7 @@ function Vote(){
 
     const handleVote = async () => {
         try {
-            const response = await axios.post('https://votingjs-backend.onrender.com/vote', { vote });
+            const response = await axios.post('http://localhost:5000/vote', { vote });
             setMessage(response.data.message);
         } catch (error) {
             setMessage('Error casting vote!');
