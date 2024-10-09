@@ -16,8 +16,8 @@ function Login() {
         name,
       });
       if (response.data.success) {
-        // navigate("/enroll", { state: { voter: response.data.voter } });
-        navigate('/enroll', { state: { voter: voterData } });
+        navigate("/enroll", { state: { voter: response.data.voter } });
+        // navigate('/enroll', { state: { voter: voterData } });
         // navigate("/vdetails", { state: { voter: response.data.voter } });
       } else {
         setMessage("Login failed");
