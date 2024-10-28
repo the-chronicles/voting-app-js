@@ -50,7 +50,7 @@ const Enrollment = () => {
 
       if (enrollResponse.data.success) {
         alert('Fingerprint enrollment successful!');
-        navigate('https://votingjs-backend.onrender.com/vote');
+        navigate('/vdetails');
       } else {
         alert('Enrollment failed. Please try again.');
       }
