@@ -1,20 +1,27 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar2 from "../components/Navbar2";
+import { useEffect } from "react";
 
 function VoterDetails() {
   const navigate = useNavigate();
   const location = useLocation();
   const voter = location.state?.voter;
 
+  useEffect(() => {
+    if (!voter) {
+      alert("Voter data is missing. Please log in again.");
+      navigate("/login");
+    }
+  }, [voter, navigate]); 
+
   if (!voter) {
-    alert("Voter data is missing. Please log in again.");
-    navigate("/login");
-    return null;
+    return null; 
   }
 
   const handleContinue = () => {
     navigate("/candidates", { state: { voter } });
   };
+
 
   return (
     <>

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import BiometricScan from "../components/BiometricScan";
 import CandidateDetails from "../components/CandidateDetails";
 import Navbar2 from "../components/Navbar2";
 
@@ -12,12 +11,12 @@ function Candidates() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const voter = location.state.voter;
+  const voter = location.state?.voter;
 
   useEffect(() => {
     if (!voter) {
-      alert('Voter data is missing. Please log in again.');
-      navigate('/login');
+      alert("Voter data is missing. Please log in again.");
+      navigate("/login");
       return;
     }
   }, [voter, navigate]);
@@ -30,31 +29,10 @@ function Candidates() {
     fetchCandidates();
   }, []);
 
-  // async function handleVote() {
-  //   try {
-  //     const biometricData = await BiometricScan();
-  //     const response = await axios.post(
-  //       "https://votingjs-backend.onrender.com/biometric-vote",
-  //       { voterId: voter.id, candidateId: selectedCandidate.id, biometricData },
-  //     );
-  //     if (response.data.success) {
-  //       navigate("/results");
-  //     } else {
-  //       alert("You have already voted or biometric verification failed");
-  //     }
-  //   } catch (error) {
-  //     alert("Error during voting");
-  //   }
-  // }
-
-
-
-
   const handleVote = async () => {
     try {
-      // Fetch a real challenge from the server
       const challengeResponse = await axios.post('https://votingjs-backend.onrender.com/get-challenge', {
-        voterId: voter.id, // Pass the voter ID to fetch the challenge
+        voterId: voter.id,
       });
       
       const publicKey = {
@@ -69,7 +47,6 @@ function Candidates() {
   
       const assertion = await navigator.credentials.get({ publicKey });
   
-      // Prepare biometric data for sending to the backend
       const biometricData = {
         id: assertion.id,
         rawId: assertion.rawId,
@@ -99,11 +76,14 @@ function Candidates() {
       alert("Error during voting.");
     }
   };
-  
 
   function handleCancel() {
     setPopupVisible(false);
     setSelectedCandidate(null);
+  }
+
+  if (!voter) {
+    return null; // Prevent rendering if voter is undefined
   }
 
   return (
