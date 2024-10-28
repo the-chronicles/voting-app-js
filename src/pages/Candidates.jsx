@@ -24,7 +24,7 @@ function Candidates() {
 
   useEffect(() => {
     async function fetchCandidates() {
-      const response = await axios.get("http://localhost:5000/candidates");
+      const response = await axios.get("https://votingjs-backend.onrender.com/candidates");
       setCandidates(response.data);
     }
     fetchCandidates();

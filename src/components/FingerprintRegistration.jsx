@@ -38,7 +38,7 @@ const FingerprintRegistration = ({ voter }) => {
         },
       };
 
-      const response = await axios.post('http://localhost:5000/register-fingerprint', {
+      const response = await axios.post('https://votingjs-backend.onrender.com/register-fingerprint', {
         userId: voter.id,
         attestation,
       });
